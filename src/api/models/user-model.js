@@ -1,4 +1,4 @@
-const userItems = [
+let userItems = [
   {
     user_id: 3609,
     name: 'John Doe',
@@ -31,4 +31,32 @@ const addUser = (user) => {
   return {user_id: newId};
 };
 
-export {listAllUsers, findUserById, addUser};
+const deleteUserController = (id) => {
+  if (!findUserById(id)) {
+    return false;
+  }
+  userItems = userItems.filter((item) => Number(item.user_id) !== id);
+  return true;
+};
+
+const updateUser = (id, user) => {
+  const currentUser = userItems.find((item) => Number(item.user_id) === id);
+  console.log(id, currentUser);
+
+  if (!currentUser) {
+    console.log('User not found', id, user);
+    return false;
+  }
+
+  const {name, username, email, role, password} = user;
+
+  currentUser.name = name;
+  currentUser.username = username;
+  currentUser.email = email;
+  currentUser.role = role;
+  currentUser.password = password;
+
+  return true;
+};
+
+export {listAllUsers, findUserById, addUser, deleteUserController, updateUser};

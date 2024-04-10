@@ -1,4 +1,10 @@
-import {addUser, findUserById, listAllUsers} from '../models/user-model.js';
+import {
+  addUser,
+  findUserById,
+  listAllUsers,
+  deleteUserController,
+  updateUser,
+} from '../models/user-model.js';
 
 const getUser = (req, res) => {
   res.json(listAllUsers());
@@ -25,12 +31,26 @@ const postUser = (req, res) => {
 };
 
 const putUser = (req, res) => {
-  // not implemented in this example, this is future homework
-  res.sendStatus(200);
+  const id = Number(req.params.id); // Convert id to number
+
+  const updatedUser = updateUser(id, req.body);
+
+  if (updatedUser) {
+    res.json({message: 'User item updated.'});
+  } else {
+    res.sendStatus(404); // Sending 404 if user not found
+  }
 };
 
 const deleteUser = (req, res) => {
-  // not implemented in this example, this is future homework
+  const id = Number(req.params.id);
+  const result = deleteUserController(id);
+  if (result) {
+    res.json({message: 'User item deleted.'});
+  } else {
+    res.sendStatus({message: 'User item not found and not deleted.'});
+  }
+
   res.sendStatus(200);
 };
 
