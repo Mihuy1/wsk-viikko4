@@ -1,4 +1,10 @@
-import {addCat, findCatById, listAllCats} from '../models/cat-model.js';
+import {
+  addCat,
+  findCatById,
+  listAllCats,
+  updateCat,
+  deleteCatController,
+} from '../models/cat-model.js';
 
 const getCat = (req, res) => {
   res.json(listAllCats());
@@ -13,7 +19,7 @@ const getCatById = (req, res) => {
   }
 };
 
-const postCat = (req, res) => {
+/* const postCat = (req, res) => {
   console.log('postCat', req.body);
   const result = addCat(req.body);
   if (result.cat_id) {
@@ -22,16 +28,33 @@ const postCat = (req, res) => {
   } else {
     res.sendStatus(400);
   }
+};*/
+
+const postCat = (req, res) => {
+  console.log('postCat req body:', req.body);
+  console.log('postCat req file:', req.file);
 };
 
 const putCat = (req, res) => {
-  // not implemented in this example, this is future homework
-  res.sendStatus(200);
+  const id = Number(req.params.id); // Convert id to number
+
+  const updatedCat = updateCat(id, req.body);
+
+  if (updatedCat) {
+    res.json({message: 'Cat item updated.'});
+  } else {
+    res.sendStatus(404); // Sending 404 if user not found
+  }
 };
 
 const deleteCat = (req, res) => {
-  // not implemented in this example, this is future homework
-  res.sendStatus(200);
+  const id = Number(req.params.id);
+  const result = deleteCatController(id);
+  if (result) {
+    res.json({message: 'Cat item deleted.'});
+  } else {
+    res.sendStatus({message: 'Cat item not found and not deleted.'});
+  }
 };
 
 export {getCat, getCatById, postCat, putCat, deleteCat};

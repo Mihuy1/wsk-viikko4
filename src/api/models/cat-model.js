@@ -1,5 +1,5 @@
 // mock data
-const catItems = [
+let catItems = [
   {
     cat_id: 9592,
     cat_name: 'Frank',
@@ -40,4 +40,22 @@ const addCat = (cat) => {
   return {cat_id: newId};
 };
 
-export {listAllCats, findCatById, addCat};
+const updateCat = (id, cat) => {
+  const currentCat = catItems.find((item) => Number(item.cat_id) === id);
+  console.log(id, currentCat);
+
+  if (!currentCat) {
+    console.log('Cat not found', id, cat);
+    return false;
+  }
+};
+
+const deleteCatController = (id) => {
+  if (!findCatById(id)) {
+    return false;
+  }
+  catItems = catItems.filter((item) => Number(item.cat_id) !== id);
+  return true;
+};
+
+export {listAllCats, findCatById, addCat, updateCat, deleteCatController};
