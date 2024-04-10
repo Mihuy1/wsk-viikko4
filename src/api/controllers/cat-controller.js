@@ -1,11 +1,11 @@
 import {addCat, findCatById, listAllCats} from '../models/cat-model.js';
 
-const getCat = (req, res) => {
-  res.json(listAllCats());
+const getCat = async (req, res) => {
+  res.json(await listAllCats());
 };
 
-const getCatById = (req, res) => {
-  const cat = findCatById(req.params.id);
+const getCatById = async (req, res) => {
+  const cat = await findCatById(req.params.id);
   if (cat) {
     res.json(cat);
   } else {
@@ -13,9 +13,9 @@ const getCatById = (req, res) => {
   }
 };
 
-const postCat = (req, res) => {
+const postCat = async (req, res) => {
   console.log('postCat', req.body);
-  const result = addCat(req.body);
+  const result = await addCat(req.body);
   if (result.cat_id) {
     res.status(201);
     res.json({message: 'New cat added.', result});
@@ -24,12 +24,12 @@ const postCat = (req, res) => {
   }
 };
 
-const putCat = (req, res) => {
+const putCat = async (req, res) => {
   // not implemented in this example, this is future homework
   res.sendStatus(200);
 };
 
-const deleteCat = (req, res) => {
+const deleteCat = async (req, res) => {
   // not implemented in this example, this is future homework
   res.sendStatus(200);
 };
