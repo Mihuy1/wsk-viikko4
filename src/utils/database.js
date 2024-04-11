@@ -6,10 +6,15 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
+
+console.log('process.env', process.env.DB_HOST);
+console.log('process.env', process.env.DB_USER);
+console.log('process.env', process.env.DB_PASSWORD);
+console.log('process.env', process.env.DB_NAME);
+
 const promisePool = pool.promise();
 export default promisePool;
