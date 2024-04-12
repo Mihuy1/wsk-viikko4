@@ -2,16 +2,15 @@ import {
   addCat,
   findCatById,
   listAllCats,
-  updateCat,
-  deleteCatController,
+  getCatsByUserId,
 } from '../models/cat-model.js';
 
-const getCat = (req, res) => {
-  res.json(listAllCats());
+const getCat = async (req, res) => {
+  res.json(await listAllCats());
 };
 
-const getCatById = (req, res) => {
-  const cat = findCatById(req.params.id);
+const getCatById = async (req, res) => {
+  const cat = await findCatById(req.params.id);
   if (cat) {
     res.json(cat);
   } else {
@@ -19,22 +18,9 @@ const getCatById = (req, res) => {
   }
 };
 
-/* const postCat = (req, res) => {
-  console.log('postCat', req.body);
-  const result = addCat(req.body);
-  if (result.cat_id) {
-    res.status(201);
-    res.json({message: 'New cat added.', result});
-  } else {
-    res.sendStatus(400);
-  }
-};*/
-
 const postCat = async (req, res) => {
-  console.log('postCat req body:', req.body);
-  console.log('postCat req file:', req.file);
-
-  const result = await addCat(req.body, req.file);
+  console.log('postCat', req.body);
+  const result = await addCat(req.body);
   if (result.cat_id) {
     res.status(201);
     res.json({message: 'New cat added.', result});
@@ -43,26 +29,14 @@ const postCat = async (req, res) => {
   }
 };
 
-const putCat = (req, res) => {
-  const id = Number(req.params.id); // Convert id to number
-
-  const updatedCat = updateCat(id, req.body);
-
-  if (updatedCat) {
-    res.json({message: 'Cat item updated.'});
-  } else {
-    res.sendStatus(404); // Sending 404 if user not found
-  }
+const putCat = async (req, res) => {
+  // not implemented in this example, this is future homework
+  res.sendStatus(200);
 };
 
-const deleteCat = (req, res) => {
-  const id = Number(req.params.id);
-  const result = deleteCatController(id);
-  if (result) {
-    res.json({message: 'Cat item deleted.'});
-  } else {
-    res.sendStatus({message: 'Cat item not found and not deleted.'});
-  }
+const deleteCat = async (req, res) => {
+  // not implemented in this example, this is future homework
+  res.sendStatus(200);
 };
 
 export {getCat, getCatById, postCat, putCat, deleteCat};

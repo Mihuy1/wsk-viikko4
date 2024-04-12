@@ -6,12 +6,23 @@ import {
   updateUser,
 } from '../models/user-model.js';
 
-const getUser = (req, res) => {
-  res.json(listAllUsers());
+import {getCatsByUserId} from '../models/cat-model.js';
+
+const getUser = async (req, res) => {
+  res.json(await listAllUsers());
 };
 
-const getUserById = (req, res) => {
-  const user = findUserById(req.params.id);
+const getUserCats = async (req, res) => {
+  const cats = await getCatsByUserId(req.params.id);
+  if (cats.length) {
+    res.json(cats);
+  } else {
+    res.sendStatus(404);
+  }
+};
+
+const getUserById = async (req, res) => {
+  const user = await findUserById(req.params.id);
   if (user) {
     res.json(user);
   } else {
@@ -19,9 +30,9 @@ const getUserById = (req, res) => {
   }
 };
 
-const postUser = (req, res) => {
+const postUser = async (req, res) => {
   console.log('postUser', req.body);
-  const result = addUser(req.body);
+  const result = await addUser(req.body);
   if (result.user_id) {
     res.status(201);
     res.json({message: 'New user added.', result});
@@ -30,28 +41,24 @@ const postUser = (req, res) => {
   }
 };
 
-const putUser = (req, res) => {
-  const id = Number(req.params.id); // Convert id to number
-
-  const updatedUser = updateUser(id, req.body);
-
-  if (updatedUser) {
-    res.json({message: 'User item updated.'});
-  } else {
-    res.sendStatus(404); // Sending 404 if user not found
-  }
-};
-
-const deleteUser = (req, res) => {
-  const id = Number(req.params.id);
-  const result = deleteUserController(id);
+const putUser = async (req, res) => {
+  const result = await updateUser(req.params.id, req.body);
   if (result) {
-    res.json({message: 'User item deleted.'});
+    res.status(200);
+    res.json({message: 'User updated.', result});
   } else {
-    res.sendStatus({message: 'User item not found and not deleted.'});
+    res.sendStatus(400);
   }
-
-  res.sendStatus(200);
 };
 
-export {getUser, getUserById, postUser, putUser, deleteUser};
+const deleteUser = async (req, res) => {
+  const result = await deleteUserController(req.params.id);
+  if (result) {
+    res.status(200);
+    res.json({message: 'User deleted.', result});
+  } else {
+    res.sendStatus(400);
+  }
+};
+
+export {getUser, getUserById, postUser, putUser, deleteUser, getUserCats};

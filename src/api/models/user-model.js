@@ -1,62 +1,93 @@
-let userItems = [
-  {
-    user_id: 3609,
-    name: 'John Doe',
-    username: 'johndoe',
-    email: 'john@metropolia.fi',
-    role: 'user',
-    password: 'password',
-  },
-];
+import promisePool from '../../utils/database.js';
 
-const listAllUsers = () => {
-  return userItems;
+const listAllUsers = async () => {
+  const [rows] = await promisePool.query('SELECT * FROM wsk_users');
+  console.log('rows', rows);
+  return rows;
 };
 
-const findUserById = (id) => {
-  return userItems.find((item) => Number(item.user_id) === id);
-};
-
-const addUser = (user) => {
-  const {name, username, email, role, password} = user;
-  const newId = userItems[0].user_id + 1;
-  userItems.unshift({
-    user_id: newId,
-    name,
-    username,
-    email,
-    role,
-    password,
-  });
-  return {user_id: newId};
-};
-
-const deleteUserController = (id) => {
-  if (!findUserById(id)) {
+const findUserById = async (id) => {
+  const [rows] = await promisePool.execute(
+    'SELECT * FROM wsk_users WHERE user_id = ?',
+    [id]
+  );
+  console.log('rows', rows);
+  if (rows.length === 0) {
     return false;
   }
-  userItems = userItems.filter((item) => Number(item.user_id) !== id);
+  return rows[0];
+};
+
+const addUser = async (user) => {
+  const {name, username, email, filename, password, role} = user;
+  const sql = `INSERT INTO wsk_users (name, username, email, filename, password, role)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+  const params = [name, username, email, filename, password, role].map(
+    (arvo) => arvo ?? null
+  );
+  const rows = await promisePool.execute(sql, params);
+  console.log('rows', rows);
+  if (rows[0].affectedRows === 0) {
+    return false;
+  }
+  return {user_id: rows[0].insertId};
+};
+
+const modifyUser = async (user, id) => {
+  const {name, username, email, filename, password, role} = user;
+  const sql = `UPDATE wsk_users SET name = ?, username = ?, email = ?, filename = ?, password = ?, role = ? WHERE user_id = ?`;
+  const params = [name, username, email, filename, password, role, id];
+  const [rows] = await promisePool.execute(sql, params);
+  console.log('rows', rows);
+  if (rows.affectedRows === 0) {
+    return false;
+  }
+  return {message: 'success'};
+};
+
+const deleteUserController = async (id) => {
+  const [rows] = await promisePool.execute(
+    'DELETE FROM wsk_users WHERE user_id = ?',
+    [id]
+  );
+  console.log('rows', rows);
+  if (rows.affectedRows === 0) {
+    return false;
+  }
+  return {message: 'success'};
+};
+const updateUser = async (id, user) => {
+  const {name, username, email, role, password} = user;
+  const sql = `UPDATE users SET name = ?, username = ?, email = ?, role = ?, password = ? WHERE user_id = ?`;
+  const params = [name, username, email, role, password, id];
+  const [rows] = await promisePool.execute(sql, params);
+  console.log('rows', rows);
+  if (rows.affectedRows === 0) {
+    return false;
+  }
   return true;
 };
 
-const updateUser = (id, user) => {
-  const currentUser = userItems.find((item) => Number(item.user_id) === id);
-  console.log(id, currentUser);
-
-  if (!currentUser) {
-    console.log('User not found', id, user);
-    return false;
-  }
-
-  const {name, username, email, role, password} = user;
-
-  currentUser.name = name;
-  currentUser.username = username;
-  currentUser.email = email;
-  currentUser.role = role;
-  currentUser.password = password;
+const getUserByUsername = async (username) => {
+  const sql = `SELECT * FROM wsk_users WHERE username = ?`;
+  const rows = await promisePool.execute(sql, username);
+  if (rows.length === 0) return false;
 
   return true;
 };
 
-export {listAllUsers, findUserById, addUser, deleteUserController, updateUser};
+const deleteUserAndCats = async (id) => {
+  await promisePool.execute('DELETE FROM cats WHERE owner = ?', [id]);
+  return deleteUserController(id);
+};
+
+export {
+  listAllUsers,
+  findUserById,
+  addUser,
+  deleteUserController,
+  updateUser,
+  getUserByUsername,
+  modifyUser,
+  deleteUserAndCats,
+};
