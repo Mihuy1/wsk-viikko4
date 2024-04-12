@@ -7,9 +7,6 @@ import {
   putCat,
   deleteCat,
 } from '../controllers/cat-controller.js';
-import multer from 'multer';
-import {createThumbnail} from '../../middlewares.js';
-
 import {createThumbnail} from '../../middlewares.js';
 
 // Multer
