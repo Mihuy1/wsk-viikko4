@@ -10,7 +10,7 @@ GET http://127.0.0.1:3000/api/v1/cats/41
 ### Get single user
 GET http://127.0.0.1:3000/api/v1/users/37
 
-## Get cat by user id
+### Get cat by user id
 GET http://127.0.0.1:3000/api/v1/users/37/cats
 
 
@@ -24,6 +24,18 @@ Content-Type: application/json
   "owner": 1,
   "filename": "fredi.jpg",
   "birthdate": "2016-01-01"
+}
+
+### Add a new user
+POST http://127.0.0.1:3000/api/v1/users
+Content-Type: application/json
+
+{
+  "name" : "Urpo",
+  "username" : "urpo1",
+  "email" : "urpo@gmail.com",
+  "password" : "qwerty",
+  "role" : "user"
 }
 
 ### Upload vito cat image to backend

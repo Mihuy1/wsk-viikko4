@@ -19,10 +19,10 @@ const findUserById = async (id) => {
 };
 
 const addUser = async (user) => {
-  const {name, username, email, filename, password, role} = user;
-  const sql = `INSERT INTO wsk_users (name, username, email, filename, password, role)
-               VALUES (?, ?, ?, ?, ?, ?)`;
-  const params = [name, username, email, filename, password, role].map(
+  const {name, username, email, password, role} = user;
+  const sql = `INSERT INTO wsk_users (name, username, email, password, role)
+               VALUES (?, ?, ?, ?, ?)`;
+  const params = [name, username, email, password, role].map(
     (arvo) => arvo ?? null
   );
   const rows = await promisePool.execute(sql, params);
