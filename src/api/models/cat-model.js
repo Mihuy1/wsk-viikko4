@@ -4,13 +4,21 @@ import promisePool from '../../utils/database.js';
 
 const listAllCats = async () => {
   const [rows] = await promisePool.query('SELECT * FROM wsk_cats');
-  console.log('rows', rows);
+  console.log('rows', [...rows]);
+  return rows;
+};
+
+const getCatsByUserId = async (id) => {
+  const [rows] = await promisePool.execute(
+    'SELECT * FROM wsk_cats WHERE owner = ?',
+    [id]
+  );
   return rows;
 };
 
 const findCatById = async (id) => {
   const [rows] = await promisePool.execute(
-    'SELECT * FROM wsk_cats WHERE cats_id = ?',
+    'SELECT * FROM wsk_cats WHERE cat_id = ?',
     [id]
   );
   console.log('rows', rows);
@@ -60,4 +68,11 @@ const removeCat = async (id) => {
   return {message: 'success'};
 };
 
-export {listAllCats, findCatById, addCat, modifyCat, removeCat};
+export {
+  listAllCats,
+  findCatById,
+  addCat,
+  modifyCat,
+  removeCat,
+  getCatsByUserId,
+};
