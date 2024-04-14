@@ -5,7 +5,9 @@ GET http://127.0.0.1:3000/api/v1/cats
 GET http://127.0.0.1:3000/api/v1/users
 
 ### Get single cat
-GET http://127.0.0.1:3000/api/v1/cats/41
+GET http://127.0.0.1:3000/api/v1/cats/47
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MSwibmFtZSI6IlBhdHJpa0FkbWluIiwidXNlcm5hbWUiOiJ5YWhoYXN6IiwiZW1haWwiOiJwYXRyaWtAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzEyOTkyNDEyLCJleHAiOjE3MTMwNzg4MTJ9.b2su_H5S9fuc7s4QOTgaZKLlyLI7wgEgeXfmL7dlysY
+
 
 ### Get single user
 GET http://127.0.0.1:3000/api/v1/users/37
@@ -13,17 +15,28 @@ GET http://127.0.0.1:3000/api/v1/users/37
 ### Get cat by user id
 GET http://127.0.0.1:3000/api/v1/users/37/cats
 
-
-### Add a new cat
-POST http://127.0.0.1:3000/api/v1/cats
+### Test is owner
+PUT http://127.0.0.1:3000/api/v1/cats/47
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MSwibmFtZSI6IlBhdHJpa0FkbWluIiwidXNlcm5hbWUiOiJ5YWhoYXN6IiwiZW1haWwiOiJwYXRyaWtAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzEyOTkyNDEyLCJleHAiOjE3MTMwNzg4MTJ9.b2su_H5S9fuc7s4QOTgaZKLlyLI7wgEgeXfmL7dlysY
 Content-Type: application/json
 
 {
-  "cat_name": "Fredi",
-  "weight": 4.2,
-  "owner": 1,
-  "filename": "fredi.jpg",
-  "birthdate": "2016-01-01"
+  "cat_name": "Petteri",
+  "weight": 5,
+  "birthdate": "2021-06-04"
+}
+
+### Add a new cat
+POST http://127.0.0.1:3000/api/v1/cats
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MSwibmFtZSI6IlBhdHJpa0FkbWluIiwidXNlcm5hbWUiOiJ5YWhoYXN6IiwiZW1haWwiOiJwYXRyaWtAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzEyOTkyNDEyLCJleHAiOjE3MTMwNzg4MTJ9.b2su_H5S9fuc7s4QOTgaZKLlyLI7wgEgeXfmL7dlysY
+Content-Type: application/json
+
+{
+  "cat_name": "PatrikKissa",
+  "weight": 3.2,
+  "owner": 41,
+  "filename": "patrikkissa.jpg",
+  "birthdate": "21-06-04"
 }
 
 ### Add a new user
@@ -31,12 +44,33 @@ POST http://127.0.0.1:3000/api/v1/users
 Content-Type: application/json
 
 {
-  "name" : "Urpo",
-  "username" : "urpo1",
-  "email" : "urpo@gmail.com",
-  "password" : "qwerty",
-  "role" : "user"
+  "name" : "PatrikAdmin",
+  "username" : "yahhasz",
+  "email" : "patrik@gmail.com",
+  "password" : "admin123",
+  "role" : "admin"
 }
+
+### test
+POST http://localhost:3000/api/v1/auth/login
+content-type: application/json
+
+{
+  "username": "yahhasz",
+  "password": "admin123"
+}
+
+### Test login
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "yahhasz",
+  "password": "admin123"
+}
+
+
+// token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MCwibmFtZSI6IlBhdHJpayIsInVzZXJuYW1lIjoieWFoaGFzIiwiZW1haWwiOiJ1cnBvQGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzEyOTI1MjU3LCJleHAiOjE3MTMwMTE2NTd9.Nn3bH-ojckgretlwOVFXgUYVUtBmnkAl3YaUdKY6OSM
 
 ### Upload vito cat image to backend
 POST http://localhost:3000/api/v1/cats

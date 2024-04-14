@@ -29,7 +29,7 @@ const findCatById = async (id) => {
 };
 
 const addCat = async (cat) => {
-  const {cat_name, weight, owner, filename, birthdate} = cat;
+  const {cat_name, weight, owner, filename = 'default.jpg', birthdate} = cat;
   const sql = `INSERT INTO wsk_cats (cat_name, weight, owner, filename, birthdate)
                VALUES (?, ?, ?, ?, ?)`;
   const params = [cat_name, weight, owner, filename, birthdate].map(
@@ -57,14 +57,13 @@ const modifyCat = async (cat, id) => {
 };
 
 const removeCat = async (id) => {
-  const [rows] = await promisePool.execute(
-    'DELETE FROM wsk_cats WHERE cat_id = ?',
-    [id]
-  );
-  console.log('rows', rows);
+  const sql = promisePool.format('DELETE FROM wsk_cats WHERE cat_id = ?', [id]);
+  const [rows] = await promisePool.execute(sql);
+
   if (rows.affectedRows === 0) {
     return false;
   }
+
   return {message: 'success'};
 };
 
