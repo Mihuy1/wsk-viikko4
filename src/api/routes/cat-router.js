@@ -7,7 +7,12 @@ import {
   putCat,
   deleteCat,
 } from '../controllers/cat-controller.js';
-import {createThumbnail} from '../../middlewares.js';
+import multer from 'multer';
+import {
+  createThumbnail,
+  isOwnerOrAdmin,
+  authenticateToken,
+} from '../../middlewares.js';
 
 // Multer
 const catRouter = express.Router();
@@ -41,13 +46,29 @@ const upload = multer({
   // diskStorage destination property overwrites dest prop
   dest: 'uploads/',
   storage,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype.startsWith('image/') ||
+      file.mimetype.startsWith('video/')
+    ) {
+      cb(null, true);
+    } else {
+      const error = new Error('Only images and videos are supported.');
+      error.status = 400;
+      cb(error);
+    }
+  },
 });
 
 catRouter
   .route('/')
   .get(getCat)
-  .post(upload.single('file'), createThumbnail, postCat);
+  .post(authenticateToken, upload.single('file'), createThumbnail, postCat);
 
-catRouter.route('/:id').get(getCatById).put(putCat).delete(deleteCat);
+catRouter
+  .route('/:id')
+  .get(authenticateToken, getCatById)
+  .put(authenticateToken, isOwnerOrAdmin, putCat)
+  .delete(authenticateToken, isOwnerOrAdmin, deleteCat);
 
 export default catRouter;

@@ -6,6 +6,8 @@ import {
   updateUser,
 } from '../models/user-model.js';
 
+import bcrypt from 'bcrypt';
+
 import {getCatsByUserId} from '../models/cat-model.js';
 
 const getUser = async (req, res) => {
@@ -31,6 +33,7 @@ const getUserById = async (req, res) => {
 };
 
 const postUser = async (req, res) => {
+  req.body.password = bcrypt.hashSync(req.body.password, 10);
   console.log('postUser', req.body);
   const result = await addUser(req.body);
   if (result.user_id) {

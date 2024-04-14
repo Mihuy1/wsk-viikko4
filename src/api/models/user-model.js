@@ -19,10 +19,10 @@ const findUserById = async (id) => {
 };
 
 const addUser = async (user) => {
-  const {name, username, email, filename, password, role} = user;
-  const sql = `INSERT INTO wsk_users (name, username, email, filename, password, role)
-               VALUES (?, ?, ?, ?, ?, ?)`;
-  const params = [name, username, email, filename, password, role].map(
+  const {name, username, email, password, role} = user;
+  const sql = `INSERT INTO wsk_users (name, username, email, password, role)
+               VALUES (?, ?, ?, ?, ?)`;
+  const params = [name, username, email, password, role].map(
     (arvo) => arvo ?? null
   );
   const rows = await promisePool.execute(sql, params);
@@ -68,19 +68,44 @@ const updateUser = async (id, user) => {
   return true;
 };
 
+const removeUser = async (id) => {
+  const connection = await promisePool.getConnection();
+  try {
+    await connection.beginTransaction();
+    await connection.execute('DELETE FROM wsk_cats WHERE owner = ?;', [id]);
+
+    const sql = connection.format('DELETE FROM wsk_users WHERE user_id = ?', [
+      id,
+    ]);
+
+    const [result] = await connection.execute(sql);
+
+    if (result.affectedRows === 0) {
+      return false;
+    }
+
+    // if no errors commit transaction
+    await connection.commit();
+
+    return {
+      message: 'User deleted',
+    };
+  } catch (error) {
+    await connection.rollback();
+    console.error('error', error.message);
+    return false;
+  } finally {
+    connection.release();
+  }
+};
+
 const getUserByUsername = async (username) => {
   const sql = `SELECT * FROM wsk_users WHERE username = ?`;
-  const rows = await promisePool.execute(sql, username);
+  const [rows] = await promisePool.execute(sql, [username]);
   if (rows.length === 0) return false;
 
-  return true;
+  return rows[0];
 };
-
-const deleteUserAndCats = async (id) => {
-  await promisePool.execute('DELETE FROM cats WHERE owner = ?', [id]);
-  return deleteUserController(id);
-};
-
 export {
   listAllUsers,
   findUserById,
@@ -89,5 +114,5 @@ export {
   updateUser,
   getUserByUsername,
   modifyUser,
-  deleteUserAndCats,
+  removeUser,
 };

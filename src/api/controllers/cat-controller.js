@@ -2,7 +2,8 @@ import {
   addCat,
   findCatById,
   listAllCats,
-  getCatsByUserId,
+  modifyCat,
+  removeCat,
 } from '../models/cat-model.js';
 
 const getCat = async (req, res) => {
@@ -30,13 +31,29 @@ const postCat = async (req, res) => {
 };
 
 const putCat = async (req, res) => {
-  // not implemented in this example, this is future homework
-  res.sendStatus(200);
+  const catId = req.params.id;
+  const updatedData = req.body;
+
+  const result = await modifyCat(updatedData, catId);
+
+  if (result) {
+    res.status(200).json(result);
+  } else {
+    res.sendStatus(400);
+  }
 };
 
 const deleteCat = async (req, res) => {
-  // not implemented in this example, this is future homework
-  res.sendStatus(200);
+  const catId = req.params.id;
+
+  const result = await removeCat(catId);
+
+  if (result) {
+    res.status(200);
+    res.json({message: 'Cat deleted succesfully'});
+  } else {
+    res.status(404);
+  }
 };
 
 export {getCat, getCatById, postCat, putCat, deleteCat};
