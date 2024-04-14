@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import {
   getCat,
   getCatById,
@@ -14,7 +13,6 @@ import {
   authenticateToken,
 } from '../../middlewares.js';
 
-// Multer
 const catRouter = express.Router();
 
 const storage = multer.diskStorage({
